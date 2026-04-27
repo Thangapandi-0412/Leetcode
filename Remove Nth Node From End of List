@@ -1,0 +1,42 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        // First - find the size
+        // Second - Calculate the exact position from the front
+        // Third - traverse to 1 position before that, and do the operations
+        int size = 0;
+        ListNode* ptr = head;
+
+        while (ptr) {
+            ptr = ptr->next;
+            size++;
+        }
+
+        ptr = head;
+        if (n > size)
+            return NULL; // safety checks
+        int N = size - (n - 1);
+
+        if (N == 1)
+            return head = head->next;
+
+        for (int i = 2; i < N; i++) {
+            ptr = ptr->next;
+            if (!ptr->next) // cases where the n> size of the linkedin list
+                return NULL;
+        }
+
+        ptr->next = ptr->next->next;
+        return head;
+    }
+};
