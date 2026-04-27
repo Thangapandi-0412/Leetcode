@@ -1,0 +1,68 @@
+class Solution {
+public:
+    struct ListNode {
+        pair<int, int> value;
+        ListNode* last;
+        ListNode* next;
+
+        ListNode(pair<int, int> value) : value(value), last(nullptr), next(nullptr) {}
+    };
+
+    vector<int> findSubstring(string s, vector<string>& words) {
+        vector<int> ans;
+
+        ListNode* recentWords = new ListNode(pair<int, int>(0, INT_MIN));
+        ListNode* current = recentWords;
+        for (int i = 1; i < words.size(); i++) {
+            current->next = new ListNode(pair<int, int>(i, INT_MIN));
+            current->next->last = current;
+            current = current->next;
+        }
+        ListNode* oldestWord = current;
+
+        int wordLength = words[0].length();
+
+        for (int i = 0; i <= (int)s.length() - wordLength * (int)words.size(); i++) {
+            current = recentWords;
+            while (current) {
+                current->value.second = INT_MIN;
+                current = current->next;
+            }
+
+            for (int j = 0; j < wordLength * words.size(); j += wordLength) {
+                string word = s.substr(i + j, wordLength);  
+
+                current = oldestWord;
+                while (current) {
+                    if (word == words[current->value.first]) {
+                        if (current->value.second != INT_MIN) {
+                            current = nullptr;
+                            break;
+                        }
+                        current->value.second = i + j;
+                        if (current != recentWords) {
+                            if (current == oldestWord) oldestWord = current->last;
+                            if (current->last) current->last->next = current->next;
+                            if (current->next) current->next->last = current->last;
+                            current->last = nullptr;
+                            current->next = recentWords;
+                            recentWords->last = current;
+                            recentWords = current;
+                        }
+                        break;
+                    }
+                    current = current->last;
+                }
+
+                if (!current) break;
+                    
+                int limit = i + j - (words.size() - 1) * wordLength;
+
+                if (oldestWord->value.second >= limit) ans.push_back(limit);
+
+            }
+        }
+
+        return ans;
+    }
+};
