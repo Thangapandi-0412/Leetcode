@@ -1,0 +1,28 @@
+class Solution {
+public:
+    vector<string> mapping = {"abc", "def",  "ghi", "jkl",
+                              "mno", "pqrs", "tuv", "wxyz"};
+    vector<string> res;
+
+    void solve(int digitIdx, int charIdx, string& temp, string& digits) {
+        if (digitIdx == digits.size()) {
+            res.push_back(temp);
+            return;
+        }
+        string& chars = mapping[digits[digitIdx] - '0' - 2];
+
+        if (charIdx == chars.size())
+            return;
+
+        temp += chars[charIdx];
+        solve(digitIdx + 1, 0, temp, digits);
+        temp.pop_back();
+        solve(digitIdx, charIdx + 1, temp, digits);
+    }
+    
+    vector<string> letterCombinations(string digits) {
+        string temp = "";
+        solve(0, 0, temp, digits);
+        return res;
+    }
+};
